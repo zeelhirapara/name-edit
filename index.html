@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hirpara Parivar Invitation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fce4ec;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #880e4f;
+        }
+
+        h2 { color: #880e4f; margin-bottom: 5px; }
+        .status { font-size: 12px; color: #666; margin-bottom: 20px; }
+
+        .input-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff9c4;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        label { font-weight: bold; color: #333; display: block; margin-bottom: 5px; }
+
+        input[type="text"] {
+            padding: 12px;
+            width: 95%;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 20px;
+            font-size: 18px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.1s;
+        }
+
+        .btn-share { background-color: #25D366; } /* WhatsApp Green */
+        .btn-copy { background-color: #d81b60; margin-top: 15px; font-size: 16px; } 
+        
+        .btn:active { transform: scale(0.98); }
+
+        /* Preview Area */
+        #previewArea {
+            text-align: left;
+            background-color: #fafafa;
+            padding: 15px;
+            border: 1px dashed #aaa;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            border-radius: 5px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #d81b60;
+            background-color: #ffede0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🌸 Hirpara Parivar Invitation 🌸</h2>
+        <div class="status">📄 Default PDF: <b>Hirpara Parivar kankotri servo.pdf</b> (Locked)</div>
+
+        <div class="input-group">
+            <label>✍️ Enter Guest Name / મહેમાનનું નામ:</label>
+            <input type="text" id="guestName" placeholder="e.g. કિરીટભાઈ પટેલ" oninput="updatePreview()">
+        </div>
+
+        <button class="btn btn-share" onclick="shareToWhatsApp()">
+            🚀 Share on WhatsApp
+        </button>
+        
+        <button class="btn btn-copy" onclick="copyTextOnly()">
+            📋 Copy Text Only (Fallback)
+        </button>
+
+        <div id="previewArea">🌸 *સ્નેહી સ્વજન શ્રી,* *<span id="displayName" class="highlight">___(Name)___</span>*🌸
+
+✨🌸 *|| હીરપરા પરિવાર – આમંત્રણ ||* 🌸✨
+ 
+💖 અમારા આંગણે આવતાં છે સુખનાં સુવર્ન ક્ષણો, જ્યાં 
+ચિ. દર્શિલ 🤵‍♂️અને ચિ. સુધા 👰‍♀️
+ના શુભ લગ્ન 💍 ની નિર્ધારણા થઈ છે. તો આ મંગલ પ્રસંગે આપશ્રી પધારી વર–વધૂને આશીર્વાદથી નવાજશો એવી હાર્દિક વિનંતી.
+ 
+📅 *તારીખ: સોમવાર, ૨૬/૦૧/૨૦૨૬*
+ 
+🙏🏻 *નિમંત્રક:*
+શ્રી દિપકભાઈ રવજીભાઈ હીરપરા 
+શ્રી ગિરીશભાઈ રવજીભાઈ હીરપરા
+શ્રી ચંદ્રેશભાઇ રવજીભાઈ હીરપરા
+શ્રી ડેનિશ દિપકભાઈ હીરપરા 
+તથા હીરપરા પરિવાર 🌸✨
+
+✨🌸 *|| આપને આવકારવા હીરપરા પરિવાર હાર્દિક આતુરતાથી રાહ જુએ છે ||* 🌸✨</div>
+    </div>
+
+    <script>
+        // The PDF filename is HARDCODED here. 
+        // It must exist in the same folder.
+        const DEFAULT_PDF_FILE = "Hirpara Parivar kankotri servo.pdf";
+
+        function updatePreview() {
+            var inputName = document.getElementById("guestName").value;
+            var displaySpan = document.getElementById("displayName");
+            
+            if (inputName.trim() !== "") {
+                displaySpan.innerText = inputName;
+            } else {
+                displaySpan.innerText = "___(Name)___";
+            }
+        }
+
+        async function shareToWhatsApp() {
+            const guestName = document.getElementById("guestName").value;
+            const textContent = document.getElementById("previewArea").innerText;
+
+            if (guestName.trim() === "") {
+                alert("Please enter a guest name first!");
+                return;
+            }
+
+            // Check if browser supports sharing
+            if (navigator.share) {
+                try {
+                    // 1. Fetch the default PDF file
+                    const response = await fetch(DEFAULT_PDF_FILE);
+                    
+                    if (!response.ok) {
+                        throw new Error("Could not find the PDF file. Make sure it is in the same folder!");
+                    }
+
+                    // 2. Convert to Blob -> File
+                    const blob = await response.blob();
+                    const file = new File([blob], "Hirpara_Invitation.pdf", { type: "application/pdf" });
+
+                    // 3. Share Data
+                    let shareData = {
+                        title: 'Wedding Invitation',
+                        text: textContent,
+                        files: [file]
+                    };
+
+                    await navigator.share(shareData);
+                } catch (err) {
+                    console.error(err);
+                    alert("Error: " + err.message + "\n\nTip: If you are opening this file directly (file://), try using VS Code 'Live Server'.");
+                }
+            } else {
+                alert("This browser does not support direct file sharing. Please copy the text and attach the PDF manually.");
+            }
+        }
+
+        function copyTextOnly() {
+            var text = document.getElementById("previewArea").innerText;
+            navigator.clipboard.writeText(text).then(function() {
+                alert("Text copied!");
+            });
+        }
+    </script>
+
+</body>
+</html>
