@@ -24,7 +24,7 @@
         }
 
         h2 { color: #880e4f; margin-bottom: 5px; }
-        .status { font-size: 12px; color: #666; margin-bottom: 20px; }
+        .status { font-size: 14px; color: #333; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 5px;}
 
         .input-group {
             margin-bottom: 20px;
@@ -64,8 +64,6 @@
         }
 
         .btn-share { background-color: #25D366; } /* WhatsApp Green */
-        .btn-copy { background-color: #d81b60; margin-top: 15px; font-size: 16px; } 
-        
         .btn:active { transform: scale(0.98); }
 
         /* Preview Area */
@@ -90,13 +88,25 @@
             border-radius: 3px;
         }
 
+        .instruction {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid #c8e6c9;
+            display: none; /* Hidden by default */
+            text-align: left;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2>🌸 Hirpara Parivar Invitation 🌸</h2>
-        <div class="status">📄 Default PDF: <b>Hirpara Parivar kankotri servo.pdf</b> (Locked)</div>
+        <div class="status">📄 File Required: <b>Hirpara Parivar kankotri servo.pdf</b></div>
 
         <div class="input-group">
             <label>✍️ Enter Guest Name / મહેમાનનું નામ:</label>
@@ -107,9 +117,12 @@
             🚀 Share on WhatsApp
         </button>
         
-        <button class="btn btn-copy" onclick="copyTextOnly()">
-            📋 Copy Text Only (Fallback)
-        </button>
+        <div id="msgBox" class="instruction">
+            ✅ <b>Text Copied! / લખાણ કોપી થઈ ગયું છે!</b> <br><br>
+            1. Select WhatsApp contact.<br>
+            2. When the PDF attaches, <b>Long Press & PASTE</b> in the caption box.<br>
+            (કારણ કે WhatsApp ડાયરેક્ટ લખાણ નથી લેતું, તમારે Paste કરવું પડશે.)
+        </div>
 
         <div id="previewArea">🌸 *સ્નેહી સ્વજન શ્રી,* *<span id="displayName" class="highlight">___(Name)___</span>*🌸
 
@@ -132,8 +145,8 @@
     </div>
 
     <script>
-        // The PDF filename is HARDCODED here. 
-        // It must exist in the same folder.
+        // THIS IS THE FILE NAME THE CODE LOOKS FOR
+        // Make sure your real PDF is named exactly "Hirpara Parivar kankotri servo.pdf"
         const DEFAULT_PDF_FILE = "Hirpara Parivar kankotri servo.pdf";
 
         function updatePreview() {
@@ -150,48 +163,48 @@
         async function shareToWhatsApp() {
             const guestName = document.getElementById("guestName").value;
             const textContent = document.getElementById("previewArea").innerText;
+            const msgBox = document.getElementById("msgBox");
 
             if (guestName.trim() === "") {
                 alert("Please enter a guest name first!");
                 return;
             }
 
-            // Check if browser supports sharing
+            // STEP 1: Copy Text to Clipboard (Workaround for Android WhatsApp)
+            try {
+                await navigator.clipboard.writeText(textContent);
+                // Show the instruction box to user
+                msgBox.style.display = "block"; 
+            } catch (err) {
+                console.error("Copy failed", err);
+            }
+
+            // STEP 2: Fetch the PDF and Share
             if (navigator.share) {
                 try {
-                    // 1. Fetch the default PDF file
                     const response = await fetch(DEFAULT_PDF_FILE);
                     
                     if (!response.ok) {
-                        throw new Error("Could not find the PDF file. Make sure it is in the same folder!");
+                        throw new Error("File 'invite.pdf' not found! Please check file name.");
                     }
-
-                    // 2. Convert to Blob -> File
+                    
                     const blob = await response.blob();
+                    // We name the file that gets shared "Hirpara_Invitation.pdf"
                     const file = new File([blob], "Hirpara_Invitation.pdf", { type: "application/pdf" });
 
-                    // 3. Share Data
                     let shareData = {
+                        files: [file],
                         title: 'Wedding Invitation',
-                        text: textContent,
-                        files: [file]
+                        text: textContent 
                     };
 
                     await navigator.share(shareData);
                 } catch (err) {
-                    console.error(err);
-                    alert("Error: " + err.message + "\n\nTip: If you are opening this file directly (file://), try using VS Code 'Live Server'.");
+                    alert("Error: " + err.message + "\n\nMake sure 'invite.pdf' is in the folder.");
                 }
             } else {
-                alert("This browser does not support direct file sharing. Please copy the text and attach the PDF manually.");
+                alert("Your browser does not support sharing files. Please Copy Text & Send manually.");
             }
-        }
-
-        function copyTextOnly() {
-            var text = document.getElementById("previewArea").innerText;
-            navigator.clipboard.writeText(text).then(function() {
-                alert("Text copied!");
-            });
         }
     </script>
 
